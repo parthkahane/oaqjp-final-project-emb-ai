@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emotion Detector</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 760px; margin: 48px auto;
+           padding: 0 20px; color: #202124; background: #f7f8fa; }
+    main { background: white; padding: 28px; border-radius: 12px;
+           box-shadow: 0 4px 18px #00000012; }
+    h1 { margin-top: 0; }
+    textarea { width: 100%; box-sizing: border-box; min-height: 130px;
+               padding: 12px; font: inherit; border: 1px solid #c7cbd1;
+               border-radius: 8px; }
+    button { margin-top: 12px; padding: 10px 18px; border: 0; border-radius: 7px;
+             background: #155eef; color: white; font-size: 1rem; cursor: pointer; }
+    #result { margin-top: 20px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Emotion Detector</h1>
+    <p>Enter a sentence to estimate its dominant emotion.</p>
+    <form id="emotion-form">
+      <label for="textToAnalyze">Text to analyze</label>
+      <textarea id="textToAnalyze" name="textToAnalyze"
+                placeholder="I am feeling wonderful today."></textarea>
+      <button type="submit">Analyze emotion</button>
+    </form>
+    <p id="result" role="status" aria-live="polite"></p>
+  </main>
+  <script>
+    const form = document.getElementById("emotion-form");
+    const textInput = document.getElementById("textToAnalyze");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const text = textInput.value.trim();
+      if (!text) {
+        result.textContent = "Invalid text! Please enter a sentence and try again.";
+        return;
+      }
+      result.textContent = "Analyzing...";
+      try {
+        const response = await fetch(
+          `/emotionDetector?textToAnalyze=${encodeURIComponent(text)}`
+        );
+        const message = await response.text();
+        result.textContent = message;
+      } catch (error) {
+        result.textContent = "Could not contact the application server.";
+      }
+    });
+  </script>
+</body>
+</html>
